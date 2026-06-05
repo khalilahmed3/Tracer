@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title data-i18n="app_title">Troubleshooting TRACER</title>
+
+<style> 
+ :root { 
+ --bg1: rgba(0,255,255,0.15); 
+ --bg2: rgba(255,0,255,0.15); 
+ --bg3a: #05010d; 
+ --bg3b: #0b0120; 
+ --panel: rgba(20, 10, 40, 0.9); 
+ --text: #fff; 
+ --accent1: #ff3c00; 
+ --accent2: #ff00ff; 
+ --accent3: #00ffff; 
+ --btn-bg: linear-gradient(135deg, #ff3c00, #ff00ff); 
+ --btn-bg-hover: linear-gradient(135deg, #00ffff, #ff00ff); 
+ } 
+ * { box-sizing: border-box; } 
+ body { 
+ font-family: Arial, sans-serif; 
+ margin: 0; padding: 0; 
+ background: linear-gradient(120deg, var(--bg1), transparent 40%), 
+ linear-gradient(240deg, var(--bg2), transparent 40%), 
+ linear-gradient(0deg, var(--bg3a), var(--bg3b)); 
+ background-size: 200% 200%; 
+ animation: cyberMove 10s linear infinite; 
+ color: var(--text); 
+ } 
+ @keyframes cyberMove { 0%{background-position:0% 50%} 100%{background-position:100% 50%} } 
+ .brand-left,.brand-right{position:fixed;top:16px;z-index:1000;display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;background:rgba(0,0,0,.12);backdrop-filter:blur(2px)} 
+ .brand-left{left:16px} .brand-right{right:16px} 
+ .brand-left img{height:38px;width:auto;display:block;filter:drop-shadow(0 0 6px rgba(0,255,255,.5))} 
+ .brand-right .brand-text{font-weight:700;letter-spacing:.3px;color:#fff;text-shadow:0 0 6px rgba(0,255,255,.35),0 0 10px rgba(255,0,255,.25);font-size:18px;white-space:nowrap} 
+ .page-top-spacer{height:80px;width:100%} 
+#app{max-width:980px;margin:0 auto 32px;padding:24px 24px 40px;background:var(--panel);border-radius:12px;box-shadow:0 0 20px rgba(0,255,255,.4),0 0 40px rgba(255,0,255,.2)} 
+ .app-header{display:grid;grid-template-columns:1fr;align-items:center;gap:8px;margin-bottom:12px;position:relative;text-align:center} 
+ h1{margin:0;text-align:center;text-shadow:0 0 5px var(--accent3),0 0 10px var(--accent3),0 0 20px var(--accent2);font-size:1.6rem;line-height:1.2} 
+ .step-title{margin-top:10px;margin-bottom:8px;font-size:1.2rem} 
+ .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px} 
+ .step{display:none;margin:12px 0 28px} 
+ .step.is-active{display:block} 
+ .buttons-center{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:15px;width:100%} 
+ .btn,.btn-secondary{background:var(--btn-bg);color:#fff;border:none;padding:12px 20px;margin:6px 4px;cursor:pointer;border-radius:8px;font-size:15px;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;box-shadow:0 0 10px rgba(255,60,0,.6),0 0 20px rgba(255,0,255,.4);transition:all .25s ease} 
+ .btn:hover,.btn-secondary:hover{transform:translateY(-1px) scale(1.04);box-shadow:0 0 15px rgba(0,255,255,.8),0 0 30px rgba(255,0,255,.6);background:var(--btn-bg-hover)} 
+ .btn-secondary{background:linear-gradient(135deg,#7a7a7a,#444);box-shadow:0 0 10px rgba(120,120,120,.4),0 0 20px rgba(80,80,80,.3);text-transform:none;letter-spacing:0} 
+ .bottom-actions{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap} 
+ .image-links{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px} 
+ .help-image{width:150px;height:110px;object-fit:cover;border-radius:12px;cursor:pointer;transition:.25s;box-shadow:0 0 12px rgba(0,0,0,.4)} 
+ .help-image:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(0,255,255,.8)} 
+ ol,ul{padding-left:20px} 
+ li{color:#ffd3d3; margin-bottom: 8px;} 
+ .lang-switcher{position:absolute; top:-8px; right:0; display:flex; gap:6px} 
+ .lang-switcher button{padding:6px 10px; font-size:12px; border-radius:6px; text-transform:none} 
+ 
+ .modal {
+   display: none;
+   position: fixed;
+   z-index: 9999;
+   left: 0; top: 0;
+   width: 100%; height: 100%;
+   background-color: rgba(0,0,0,0.9);
+   backdrop-filter: blur(8px);
+   align-items: center;
+   justify-content: center;
+   cursor: zoom-out;
+ }
+ .modal.is-visible { display: flex; }
+ .modal-content {
+   max-width: 95%;
+   max-height: 95%;
+   border-radius: 10px;
+   box-shadow: 0 0 30px var(--accent3), 0 0 60px var(--accent2);
+ }
+ #steps:focus { outline: none; }
+ </style> 
+</head>
+<body>
+  <div class="brand-left">
+    <img src="images/dxc.png" alt="Logo DXC"/>
+  </div>
+  <div class="brand-right">
+    <span class="brand-text">EssilorLuxottica</span>
+  </div>
+
+  <div class="page-top-spacer"></div>
+
+  <div id="app" role="application">
+    <header class="app-header">
+      <h1 data-i18n="app_title">Troubleshooting TRACER</h1>
+      <div class="lang-switcher">
+        <button type="button" class="btn-secondary" onclick="setLanguage('it')">Italiano 🇮🇹</button>
+        <button type="button" class="btn-secondary" onclick="setLanguage('en')">English 🇬🇧</button>
+      </div>
+    </header>
+
+    <main id="steps" tabindex="-1">
+      <!-- LANG SELECT -->
+      <section id="langSelect" class="step is-active">
+        <h2 class="step-title" data-i18n="lang_select_title">Seleziona la lingua / Select language</h2>
+        <div class="buttons-center">
+          <button type="button" class="btn" onclick="setLanguage('it')" data-next="step0">Italiano 🇮🇹</button>
+          <button type="button" class="btn" onclick="setLanguage('en')" data-next="step0">English 🇬🇧</button>
+        </div>
+      </section>
+
+      <!-- STEP 0 -->
+      <section id="step0" class="step">
+        <h2 class="step-title" data-i18n="title_step0">Apertura Ticket Tracer</h2>
+        <p data-i18n="step0_p1">Lo store ci ha contattati per segnalare un problema con il tracer.</p>
+        <div class="image-links">
+          <a href="images/essilor tess.png" target="_blank" rel="noopener">
+            <img src="images/essilor tess.png" class="help-image" alt="Essilor Tess" data-i18n="tr_essilor" data-i18n-attr="alt"/>
+          </a>
+        
+          <a href="images/tracer hoya.png" target="_blank" rel="noopener">
+            <img src="images/tracer hoya.png" class="help-image" alt="Hoya GT-3000" data-i18n="tr_hoya" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step1" data-i18n="btn_next">AVANTI / NEXT</button>
+        </div>
+      </section>
+
+      <!-- STEP 1 -->
+      <section id="step1" class="step">
+        <h2 class="step-title" data-i18n="title_step1">Verifica Connettività SYSTECH</h2>
+        <p data-i18n="step1_p1">Accedere al Personality Server e verificare se <strong>SYSTECH</strong> è pingabile.</p>
+        <p data-i18n="step1_q1">SYSTECH risulta pingabile?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step1_1" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 1-1 -->
+      <section id="step1_1" class="step">
+        <h2 class="step-title" data-i18n="title_step1_1">Ripristino Hardware Moxa</h2>
+        <ul>
+          <li data-i18n="step1_1_li1">Identificare il Moxa (scatolina nera)</li>
+          <li data-i18n="step1_1_li2">Scollegare il cavo di alimentazione e ricollegarlo</li>
+          <li data-i18n="step1_1_li3">Staccare il cavo ethernet e ricollegarlo di nuovo</li>
+        </ul>
+        <p data-i18n="step1_1_q1">SYSTECH è tornato pingabile su Personality server?</p>
+        <div class="image-links">
+          <a href="images/step 1-1.png" target="_blank" rel="noopener">
+            <img src="images/step 1-1.png" class="help-image" alt="Step 2-3-3" data-i18n="alt_step2_3_3" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step1_2" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 1-2 -->
+      <section id="step1_2" class="step">
+        <h2 class="step-title" data-i18n="title_step1_2">Escalation Local IT</h2>
+        <p data-i18n="step1_2_p1">Assegnare il ticket a <strong>'ITALY - LOCAL IT TEAM'</strong></p>
+        <p data-i18n="step1_2_p2"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Essilor > Other</p>
+        <p data-i18n="step1_2_p3"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Hoya > Other</p>
+
+        <div class="bottom-actions">
+          <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+          <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section id="step2" class="step">
+        <h2 class="step-title" data-i18n="title_step2">Localizzazione dell'Errore</h2>
+        <p data-i18n="step2_q1">Dove viene visualizzato l’errore?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_1" data-i18n="step2_b1">Messaggio errore display</button>
+          <button type="button" class="btn" data-next="step3_1" data-i18n="step2_b2">LPA Sedico</button>
+          <button type="button" class="btn" data-next="step4" data-i18n="step2_b3">SHAMIR</button>
+          <button type="button" class="btn" data-next="step5" data-i18n="step2_b4">OPSYSWEB</button>
+          <button type="button" class="btn" data-next="step3_1" data-i18n="step2_b5">No Errore</button>
+          <button type="button" class="btn" data-next="step3_2_6" data-i18n="step2_b6">ORDINI STAGED</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 2-1 -->
+      <section id="step2_1" class="step">
+        <h2 class="step-title" data-i18n="title_step2_1">Identificazione Modello Tracer</h2>
+        <p data-i18n="step2_1_q1">Quale Tracer sta usando lo store?</p> 
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_2" data-i18n="tr_hoya">HOYA GT-3000</button>
+          <button type="button" class="btn" data-next="step2_4" data-i18n="tr_essilor">ESSILOR TESS</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 2-2 -->
+      <section id="step2_2" class="step">
+        <h2 class="step-title" data-i18n="title_step2_2">Codici Errore Hoya</h2>
+        <p data-i18n="step2_2_q1">Qual è l'errore visualizzato?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step1_2" data-i18n="err_64">Errore 64</button>
+          <button type="button" class="btn" data-next="step2_3" data-i18n="err_92">Errore 92/80</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 2-3 -->
+      <section id="step2_3" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3">Riavvio Servizi Personality Server</h2>
+        <p data-i18n="step2_3_p1">Accedere su personality server e andare su Tools nel server GLOBAL-CUSORDER.</p>
+
+        <div class="image-links">
+          <a href="images/step 2-3.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3.png" class="help-image" alt="Step 2-3-3" data-i18n="alt_step2_3_3" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_1" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 2-3-1 -->
+      <section id="step2_3_1" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_1">Configurazione Startup Systech</h2>
+        <p data-i18n="step2_3_1_p1">Ricercare il comando SYSTECH STARTUP FILE CONFIGURATION ed avviarlo con Run This Command. Attendere il termine del processo.</p>
+        <div class="image-links">
+          <a href="images/step 2-3-1.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-1.png" class="help-image" alt="Step 2-3-1" data-i18n="alt_step2_3_1" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_2" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 2-3-2 -->
+      <section id="step2_3_2" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_2">Riavvio Servizio Systech</h2>
+        <p data-i18n="step2_3_2_p1">Ricercare il comando SYSTECH SERVICE RESTART ed avviarlo con Run This Command. Attendere il termine del processo.</p>
+        <p data-i18n="step2_3_2_q1">Il problema è risolto?</p>
+        <div class="image-links">
+          <a href="images/step 2-3-2.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-2.png" class="help-image" alt="Step 2-3-2" data-i18n="alt_step2_3_2" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step2_3_3" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 2-3-3 a 2-3-9 (Config HOYA) -->
+      <section id="step2_3_3" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_3">Inizializzazione Hoya GT-3000</h2>
+        <ul>
+          <li data-i18n="hoya_conf_1">SPEGNETE e RIACCENDETE il Tracciatore.</li>
+          <li data-i18n="hoya_conf_2">Assicuratevi che sia in AUTO MEASURE &lt;START&gt;.</li>
+        </ul>
+        <div class="image-links">
+          <a href="images/step 2-3-3.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-3.png" class="help-image" alt="Step 2-3-3" data-i18n="alt_step2_3_3" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_4" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step2_3_4" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_4">Hoya: Configurazione Porta (H100)</h2>
+        <p data-i18n="hoya_conf_3">TENETE PREMUTO SELECT e PREMETE 3 VOLTE ITEM. Poi PREMETE START per il MENU CONFIGURAZIONE.</p>
+        <p data-i18n="hoya_conf_4">Cercare <strong>H100 SET PORT</strong> e confermare con START.</p>
+        <div class="image-links">
+          <a href="images/step 2-3-4.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-4.png" class="help-image" alt="Step 2-3-4" data-i18n="alt_step2_3_4" data-i18n-attr="alt"/>
+          </a>
+          <a href="images/step 2-3-4(2).png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-4(2).png" class="help-image" alt="Step 2-3-4" data-i18n="alt_step2_3_4" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_5" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step2_3_5" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_5">Hoya: Abilitazione Barcode</h2>
+        <p data-i18n="step2_3_5_p1">Con il tasto SELECT impostare l’opzione BARCODE. Per abilitarlo alla funzione BARCODE>BARCODE premete i tasti UP & DOWN, poi CONFERMATE con START.</p>
+        <div class="image-links">
+          <a href="images/step 2-3-5.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-5.png" class="help-image" alt="Step 2-3-5" data-i18n="alt_step2_3_5" data-i18n-attr="alt"/>
+          </a>
+          <a href="images/step 2-3-5(2).png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-5(2).png" class="help-image" alt="Step 2-3-5" data-i18n="alt_step2_3_5" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_6" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step2_3_6" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_6">Hoya: Parametri Comunicazione (H101)</h2>
+        <p data-i18n="step2_3_6_p1">PREMETE RESET per USCIRE dal menu. Poi cercate H101 SET COMM e confermate con START. Dovrebbero esserci le impostazioni 9600 N 1.</p>
+        <div class="image-links">
+          <a href="images/step 2-3-6.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-6.png" class="help-image" alt="Step 2-3-6" data-i18n="alt_step2_3_6" data-i18n-attr="alt"/>
+          </a>
+          <a href="images/step 2-3-6(2).png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-6(2).png" class="help-image" alt="Step 2-3-6" data-i18n="alt_step2_3_6" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_7" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step2_3_7" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_7">Hoya: Impostazione Protocollo (H103)</h2>
+        <p data-i18n="step2_3_7_p1">PREMETE RESET per USCIRE dal menu. Poi cercate H103 SET PROTOCOL e confermate con START. Selezionare DATA OMA.</p>
+        <div class="image-links">
+          <a href="images/step 2-3-7.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-7.png" class="help-image" alt="Step 2-3-7" data-i18n="alt_step2_3_7" data-i18n-attr="alt"/>
+          </a>
+          <a href="images/step 2-3-7(2).png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-7(2).png" class="help-image" alt="Step 2-3-7" data-i18n="alt_step2_3_7" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_8" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step2_3_8" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_8">Hoya: Verifica Parametri OMA (H104)</h2>
+        <p data-i18n="step2_3_8_p1">Cercare H104 SET OMA e confermare con START. Verificare i parametri OMA.</p>
+        
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_3_9" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step2_3_9" class="step">
+        <h2 class="step-title" data-i18n="title_step2_3_9">Hoya: Salvataggio e Test Finale</h2>
+        <p data-i18n="hoya_conf_5">Punti da CORREGGERE: POINT: 400, CIRC: ON, HBOX: ON, VBOX: ON. SPEGNETE e RIACCENDETE il Tracciatore per COMPLETARE la procedura.</p>
+        <div class="image-links">
+          <a href="images/step 2-3-9.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-9.png" class="help-image" alt="Step 2-3-9" data-i18n="alt_step2_3_9" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <p data-i18n="step2_3_9_q1">Il problema è risolto?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step1_2" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 2-0 (Risoluzione) -->
+      <section id="step2_0" class="step">
+        <h2 class="step-title">Ticket Risolto</h2>
+        <p data-i18n="step2_0_p1">Risolvere il ticket.</p>
+        <p data-i18n="step1_2_p2"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Essilor > Other</p>
+        <p data-i18n="step1_2_p3"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Hoya > Other</p>
+        <div class="bottom-actions">
+          <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+          <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
+        </div>
+      </section>
+
+      <!-- STEP 2-4 (Essilor Error) -->
+      <section id="step2_4" class="step">
+        <h2 class="step-title" data-i18n="title_step2_4">Errori Display Essilor</h2>
+        <p data-i18n="step2_4_q1">Qual è l'errore che esce sul display?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_4_1" data-i18n="err_opt">OPT SAVING [NUM]</button>
+          <button type="button" class="btn" data-next="step1_2" data-i18n="err_tec">TEC [NUM]</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step2_4_1" class="step">
+        <h2 class="step-title" data-i18n="title_step2_4_1">Reset Errore Essilor</h2>
+        <p data-i18n="step2_4_1_p1">Indicare allo store di premere il tasto Verde spuntato sulla tastiera del tracciatore.</p>
+        <p data-i18n="step2_4_1_q1">Il problema è risolto?</p>
+        
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step1_2" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 3-1 (LPA) -->
+      <section id="step3_1" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1">Analisi Errori LPA</h2>
+        <p data-i18n="step3_1_q1">Quale errore visualizza?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_1" data-i18n="err_lpa1">Tracer could not be completed</button>
+          <button type="button" class="btn" data-next="step3_2_1" data-i18n="err_lpa2">Operation not allowed for the user</button>
+          <button type="button" class="btn" data-next="step3_1_1" data-i18n="step2_b5">No Errore</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 3-1-1 -->
+      <section id="step3_1_1" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_1">Accesso Interfaccia SYSTECH</h2>
+        <p data-i18n="step3_1_1_p1">Andare su Personality server e individuare la voce "Systech" e cliccare sul IP.</p>
+        <div class="image-links">
+          <a href="images/step 3-1-1.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-1.png" class="help-image" alt="Step 3-1-1" data-i18n="alt_step3_1_1" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_2" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- STEP 3-1-2 -->
+      <section id="step3_1_2" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_2">Login Interfaccia Moxa</h2>
+        <p data-i18n="step3_1_2_p1">Nel campo Password inserire "moxa".</p>
+        <div class="image-links">
+          <a href="images/step 3-1-2.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-2.png" class="help-image" alt="Step 3-1-2" data-i18n="alt_step3_1_2" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_3" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_3" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_3">Monitoraggio Segnali Async</h2>
+        <p data-i18n="step3_1_3_p1">Cliccare su 'Monitor' e 'Async'.</p>
+        <p data-i18n="step3_1_3_q1">Uno dei valori 'DSR' e 'CTS' è nello stato 'OFF'?</p>
+        <div class="image-links">
+          <a href="images/step 3-1-3.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-3.png" class="help-image" alt="Step 3-1-3" data-i18n="alt_step3_1_3" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_4" data-i18n="yes_off">SÌ / OFF</button>
+          <button type="button" class="btn" data-next="step3_1_5" data-i18n="no_on">NO / ON</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_4" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_4">Verifica Cablaggio Hardware</h2>
+        <p data-i18n="step3_1_4_p1">Verificare il cavo tra MOXA e AB switch. Verificare se AB switch è impostato su Sedico.</p>
+        <p data-i18n="step3_1_4_q1">i valori 'DSR' e 'CTS' sono tornati ON e il problema è risolto</p>
+        <div class="image-links">
+          <a href="images/step 3-1-4.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-4.png" class="help-image" alt="Step 3-1-4" data-i18n="alt_step3_1_4" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step1_2" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_5" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_5">Riavvio Servizi GLOBAL-CUSORDER</h2>
+        <p data-i18n="step2_3_p1">Accedere su personality server e andare su Tools nel server GLOBAL-CUSORDER.</p>
+        <div class="image-links">
+          <a href="images/step 3-1-5.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-5.png" class="help-image" alt="Step 3-1-5" data-i18n="alt_step3_1_5" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_6" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_6" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_6">Esecuzione Startup Configuration</h2>
+        <p data-i18n="step2_3_1_p1">Ricercare il comando SYSTECH STARTUP FILE CONFIGURATION ed avviarlo con Run This Command. Attendere il termine del processo.</p>
+        <div class="image-links">
+          <a href="images/step 3-1-6.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-6.png" class="help-image" alt="Step 3-1-6" data-i18n="alt_step3_1_6" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_7" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_7" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_7">Esecuzione Service Restart</h2>
+        <p data-i18n="step2_3_2_p1">Ricercare il comando SYSTECH SERVICE RESTART ed avviarlo con Run This Command.</p>
+        <p data-i18n="step2_3_2_q1">Il problema è risolto?</p>
+        <div class="image-links">
+          <a href="images/step 2-3-2.png" target="_blank" rel="noopener">
+            <img src="images/step 2-3-2.png" class="help-image" alt="Step 2-3-2" data-i18n="alt_step2_3_2" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step3_1_8" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_8" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_8">Protocollo Essilor (Combinazione Tasti)</h2>
+        <p data-i18n="step3_1_8_p1">Selezionare contemporaneamente Tasto 1 e Tasto VERDE SPUNTATO su ESSILOR TESS.</p>
+        <div class="image-links">
+          <a href="images/step 3-1-8.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-8.png" class="help-image" alt="Step 3-1-8" data-i18n="alt_step3_1_8" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_9" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_9" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_9">Essilor: Menu Communicate</h2>
+        <p data-i18n="step3_1_9_p1">Premere Tasto 6 (COMMUNICATE). Confermare con VERDE.</p>
+        <div class="image-links">
+          <a href="images/step 3-1-9.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-9.png" class="help-image" alt="Step 3-1-9" data-i18n="alt_step3_1_9" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_10" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_10" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_10">Essilor: Menu Protocol</h2>
+        <p data-i18n="step3_1_10_p1">Premere Tasto 1 (PROTOCOL). Confermare con VERDE.</p>
+        <div class="image-links">
+          <a href="images/step 3-1-10.png" target="_blank" rel="noopener">
+            <img src="https://dxcportal.sharepoint.com/:i:/r/sites/ITAEssilorLuxotticaL1/Shared%20Documents/ITA%20EL%20L1/WEB%20APP/Tracer/images/step%203-1-10.png?csf=1&web=1&e=zlIyKs" class="help-image" alt="Step 3-1-10" data-i18n="alt_step3_1_10" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_11" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_11" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_11">Essilor: Verifica Videata Protocollo</h2>
+        <p data-i18n="step3_1_11_p1">Possibile che si possa presentare la videata seguente:</p>
+        <div class="image-links">
+          <a href="images/step 3-1-11.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-11.png" class="help-image" alt="Step 3-1-11" data-i18n="alt_step3_1_11" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_12" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_12" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_12">Essilor: Selezione Pc OmaRs232</h2>
+        <p data-i18n="step3_1_12_p1">Premere Tasto 1 (PC OmaETH). Confermare con VERDE. Ricercare Pc OmaRs232 e confermare.</p>
+        <div class="image-links">
+          <a href="images/step 3-1-12.png" target="_blank" rel="noopener">
+            <img src="images/step 3-1-12.png" class="help-image" alt="Step 3-1-12" data-i18n="alt_step3_1_12" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_1_13" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_1_13" class="step">
+        <h2 class="step-title" data-i18n="title_step3_1_13">Essilor: Configurazione Baud Rate</h2>
+        <p data-i18n="step3_1_13_p1">Tasto ROSSO per uscire. Poi COMMUNICATE -> PARAMETERS -> PC PORT. Baud: 9600 (HOYA) o 19200 (TESS).</p>
+        <p data-i18n="step2_3_2_q1">Il problema è risolto?</p>
+        
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step3_3_1" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- MOXA SETTINGS -->
+      <section id="step3_3_1" class="step">
+        <h2 class="step-title" data-i18n="title_step3_3_1">Impostazioni Moxa Avanzate</h2>
+        <p data-i18n="step3_3_1_p1">Verificare impostazioni moxa su Personality Server (IP Systech).</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_3_3" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_3_3" class="step">
+        <h2 class="step-title" data-i18n="title_step3_3_3">Moxa: Basic & Network Settings</h2>
+        <p data-i18n="step3_3_3_p1">Assicurarsi che BASIC SETTINGS e NETWORK SETTINGS siano settati correttamente.</p>
+        <div class="image-links">
+          <a href="images/step 3-3-3.png" target="_blank" rel="noopener">
+            <img src="images/step 3-3-3.png" class="help-image" alt="Step 3-3-3" data-i18n="alt_step3_3_3" data-i18n-attr="alt"/>
+          </a>
+          <a href="images/step 3-3-4.png" target="_blank" rel="noopener">
+            <img src="images/step 3-3-4.png" class="help-image" alt="Step 3-3-4" data-i18n="alt_step3_3_4" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_3_5" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_3_5" class="step">
+        <h2 class="step-title" data-i18n="title_step3_3_5">Moxa: Serial Port Settings</h2>
+        <p data-i18n="step3_3_5_p1">SERIAL SETTINGS > PORT 1: Baud rate HOYA 9600, TESS 19200. OPERATING SETTINGS: PORT 1.</p>
+        <div class="image-links">
+          <a href="images/step 3-3-5.png" target="_blank" rel="noopener">
+            <img src="images/step 3-3-5.png" class="help-image" alt="Step 3-3-5" data-i18n="alt_step3_3_5" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_3_6" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_3_6" class="step">
+        <h2 class="step-title" data-i18n="title_step3_3_6">Moxa: Operating Settings</h2>
+        <p data-i18n="step3_3_6_p1">Assicurarsi che il menu OPERATING SETTINGS > PORT 1 sia settato come da immagine. Confermare poi con SUBMIT.</p>
+        <div class="image-links">
+          <a href="images/step 3-3-6.png" target="_blank" rel="noopener">
+            <img src="images/step 3-3-6.png" class="help-image" alt="Step 3-3-6" data-i18n="alt_step3_3_6" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_3_7" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_3_7" class="step">
+        <h2 class="step-title" data-i18n="title_step3_3_7">Verifica Risoluzione Moxa</h2>
+        <p data-i18n="step3_3_7_q1">Il problema è risolto?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step1_2" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <!-- USER SETTINGS LPA -->
+      <section id="step3_2_1" class="step">
+        <h2 class="step-title" data-i18n="title_step3_2_1">LPA: Gestione Profili Utente</h2>
+        <p data-i18n="step3_2_1_p1">Problema legato all'utente. Accedere a LPA con credenziali Store Manager.</p>
+        <div class="image-links">
+          <a href="images/step 3-2-1.png" target="_blank" rel="noopener">
+            <img src="images/step 3-2-1.png" class="help-image" alt="Step 3-2-1" data-i18n="alt_step3_2_1" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_2_2" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_2_2" class="step">
+        <h2 class="step-title" data-i18n="title_step3_2_2">LPA: Associate Setup e Abilitazioni</h2>
+        <p data-i18n="step3_2_2_p1">Entrare in <strong>Associate Setup</strong> e modificare le abilitazioni degli utenti.</p>
+        <p data-i18n="step2_3_2_q1">Il problema è risolto?</p>
+        <div class="image-links">
+          <a href="images/step 3-2-2.png" target="_blank" rel="noopener">
+            <img src="images/step 3-2-2.png" class="help-image" alt="Step 3-2-2" data-i18n="alt_step3_2_2" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step3_2_5" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step3_2_6" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step3_2_5" class="step">
+        <h2 class="step-title">Ticket Risolto</h2>
+        <p data-i18n="step3_2_5_p1">Chiusura ticket (CIAO Optical > Toolkit - LPA).</p>
+        <p data-i18n="step2_0_p1">Risolvere il ticket.</p>
+        <p data-i18n="step3_2_6_cat"><strong>Categoria:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA</p>
+        
+        <div class="bottom-actions">
+          <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+          <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
+        </div>
+      </section>
+
+      <!-- SHAMIR PATH -->
+      <section id="step4" class="step">
+        <h2 class="step-title" data-i18n="title_step4">Configurazione Portale SHAMIR</h2>
+        <p data-i18n="step2_1_q1">Quale Tracer sta usando lo store?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_2" data-i18n="tr_hoya">HOYA GT-3000</button>
+          <button type="button" class="btn" data-next="step4_1" data-i18n="tr_essilor">ESSILOR TESS</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_1" class="step">
+        <h2 class="step-title" data-i18n="title_step4_1">Shamir: Configurazione Essilor Tess</h2>
+        <p data-i18n="step4_1_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-1.png" target="_blank" rel="noopener">
+            <img src="images/step 4-1.png" class="help-image" alt="Step 4-1" data-i18n="alt_step4_1" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_2" class="step">
+        <h2 class="step-title" data-i18n="title_step4_2">Shamir: Configurazione Hoya GT-3000</h2>
+        <p data-i18n="step4_2_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-2.png" target="_blank" rel="noopener">
+            <img src="images/step 4-2.png" class="help-image" alt="Step 4-2" data-i18n="alt_step4_2" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3" class="step">
+        <h2 class="step-title" data-i18n="title_step4_3">Salvataggio Impostazioni Shamir</h2>
+        <p data-i18n="step4_3_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-3.png" target="_blank" rel="noopener">
+            <img src="images/step 4-3.png" class="help-image" alt="Step 4-3" data-i18n="alt_step4_3" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3_1" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3_1" class="step">
+        <h2 class="step-title" data-i18n="title_step4_3_1">Verifica Gestione Dispositivi</h2>
+        <p data-i18n="step4_3_1_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-3-1.png" target="_blank" rel="noopener">
+            <img src="images/step 4-3-1.png" class="help-image" alt="Step 4-3-1" data-i18n="alt_step4_3_1" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3_2" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3_2" class="step">
+        <h2 class="step-title" data-i18n="title_step4_3_2">Identificazione Porte COM</h2>
+        <p data-i18n="step4_3_2_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-3-2.png" target="_blank" rel="noopener">
+            <img src="images/step 4-3-2.png" class="help-image" alt="Step 4-3-2" data-i18n="alt_step4_3_2" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3_3" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3_3" class="step">
+        <h2 class="step-title" data-i18n="title_step4_3_3">Creazione Nuovo Ordine Sagoma</h2>
+        <p data-i18n="step4_3_3_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-3-3.png" target="_blank" rel="noopener">
+            <img src="images/step 4-3-3.png" class="help-image" alt="Step 4-3-3" data-i18n="alt_step4_3_3" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3_4" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3_4" class="step">
+        <h2 class="step-title" data-i18n="title_step4_3_4">Acquisizione Dati da Tracer</h2>
+        <p data-i18n="step4_3_4_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-3-4.png" target="_blank" rel="noopener">
+            <img src="images/step 4-3-4.png" class="help-image" alt="Step 4-3-4" data-i18n="alt_step4_3_4" data-i18n-attr="alt"/>
+          </a>
+        </div>        
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3_5" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3_5" class="step">
+        <h2 class="step-title" data-i18n="title_step4_3_5">Monitoraggio Sezione Sagome</h2>
+        <p data-i18n="step4_3_5_p1"></p>
+        <div class="image-links">
+          <a href="images/step 4-3-5.png" target="_blank" rel="noopener">
+            <img src="images/step 4-3-5.png" class="help-image" alt="Step 4-3-5" data-i18n="alt_step4_3_5" data-i18n-attr="alt"/>
+          </a>
+        </div> 
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step4_3_6" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3_6" class="step">
+        <h2 class="step-title" data-i18n="title_step4_3_6">Procedura d'Uso Operativa</h2>
+        <p data-i18n="step4_3_6_p1"></p>
+        <p data-i18n="step2_3_2_q1">Il problema è risolto?</p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step4_3_7" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step4_3_7" class="step">
+        <h2 class="step-title">Assistenza SHAMIR</h2>
+        <p data-i18n="step4_3_7_p1"></p>
+        <div class="bottom-actions">
+          <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+          <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
+        </div>
+      </section>
+
+      <!-- STEP 5 (OPSYSWEB) -->
+      <section id="step5" class="step">
+        <h2 class="step-title" data-i18n="title_step5">Configurazione OPSYSWEB</h2>
+        <p data-i18n="step5_p1"></p>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_1" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_1" class="step">
+        <h2 class="step-title" data-i18n="title_step5_1">Menu Ordini Lenti</h2>
+        <p data-i18n="step5_1_p1"></p>
+        <div class="image-links">
+          <a href="images/step 5-1.png" target="_blank" rel="noopener">
+            <img src="images/step 5-1.png" class="help-image" alt="Step 5-1" data-i18n="alt_step5_1" data-i18n-attr="alt"/>
+          </a>
+        </div> 
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_2" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_2" class="step">
+        <h2 class="step-title" data-i18n="title_step5_2">Menu Aggiunta Forma</h2>
+        <p data-i18n="step5_2_p1"></p>
+        <div class="image-links">
+          <a href="images/step 5-2.png" target="_blank" rel="noopener">
+            <img src="images/step 5-2.png" class="help-image" alt="Step 5-2" data-i18n="alt_step5_2" data-i18n-attr="alt"/>
+          </a>
+        </div> 
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_3" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_3" class="step">
+        <h2 class="step-title" data-i18n="title_step5_3">Selezione Lettore</h2>
+        <p data-i18n="step5_3_p1"></p>
+        <div class="image-links">
+          <a href="images/step 5-3.png" target="_blank" rel="noopener">
+            <img src="images/step 5-3.png" class="help-image" alt="Step 5-3" data-i18n="alt_step5_3" data-i18n-attr="alt"/>
+          </a>
+        </div> 
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_4" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_4" class="step">
+        <h2 class="step-title" data-i18n="title_step5_4">Configurazione Parametri Dispositivo</h2>
+        <p data-i18n="step5_4_p1"></p>
+        <div class="image-links">
+          <a href="images/step 5-4.png" target="_blank" rel="noopener">
+            <img src="images/step 5-4.png" class="help-image" alt="Step 5-4" data-i18n="alt_step5_4" data-i18n-attr="alt"/>
+          </a>
+          <a href="images/step 5-4 (2).png" target="_blank" rel="noopener">
+            <img src="images/step 5-4 (2).png" class="help-image" alt="Step 5-4" data-i18n="alt_step5_4" data-i18n-attr="alt"/>
+          </a>
+        </div> 
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_5" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_5" class="step">
+        <h2 class="step-title" data-i18n="title_step5_5">Installazione Plugin T2WS</h2>
+        <p data-i18n="step5_5_p1"></p>
+         <div class="image-links">
+          <a href="images/step 5-5.png" target="_blank" rel="noopener">
+            <img src="images/step 5-5.png" class="help-image" alt="Step 5-5" data-i18n="alt_step5_5" data-i18n-attr="alt"/>
+          </a>
+        </div> 
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_6" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_6" class="step">
+        <h2 class="step-title" data-i18n="title_step5_6">Verifica Icona Programma Attivo</h2>
+        <p data-i18n="step5_6_p1"></p>
+        <div class="image-links">
+          <a href="images/step 5-6.png" target="_blank" rel="noopener">
+            <img src="images/step 5-6.png" class="help-image" alt="Step 5-6" data-i18n="alt_step5_6" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_7" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_7" class="step">
+        <h2 class="step-title" data-i18n="title_step5_7">Generazione e Attivazione Token</h2>
+        <p data-i18n="step5_7_p1"></p>
+        <div class="image-links">
+          <a href="images/step 5-7.png" target="_blank" rel="noopener">
+            <img src="images/step 5-7.png" class="help-image" alt="Step 5-7" data-i18n="alt_step5_7" data-i18n-attr="alt"/>
+          </a>          
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_8" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_8" class="step">
+        <h2 class="step-title" data-i18n="title_step5_8">Inserimento Token di Attivazione</h2>
+        <p data-i18n="step5_8_p1"></p>
+         <div class="image-links">        
+          <a href="images/step 5-8.png" target="_blank" rel="noopener">
+            <img src="images/step 5-8.png" class="help-image" alt="Step 5-8" data-i18n="alt_step5_8" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_9" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_9" class="step">
+        <h2 class="step-title" data-i18n="title_step5_9">Parametri di Connessione COM</h2>
+        <p data-i18n="step5_9_p1"></p>
+        
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_9_1" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_9_1" class="step">
+        <h2 class="step-title" data-i18n="title_step5_9_1">Ricerca Hardware Porta COM</h2>
+        <p data-i18n="step4_3_1_p1"></p>
+         <div class="image-links">        
+          <a href="images/step 5-9-1.png" target="_blank" rel="noopener">
+            <img src="images/step 5-9-1.png" class="help-image" alt="Step 5-9-1" data-i18n="alt_step5_9_1" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_9_2" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_9_2" class="step">
+        <h2 class="step-title" data-i18n="title_step5_9_2">Verifica Porte (COM e LPT)</h2>
+        <p data-i18n="step4_3_2_p1"></p>
+        <div class="image-links">        
+          <a href="images/step 5-9-2.png" target="_blank" rel="noopener">
+            <img src="images/step 5-9-2.png" class="help-image" alt="Step 5-9-2" data-i18n="alt_step5_9_2" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step5_9_3" data-i18n="btn_next">Avanti</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_9_3" class="step">
+        <h2 class="step-title" data-i18n="title_step5_9_3">Esecuzione Tracciatura Finale</h2>
+        <p data-i18n="step5_9_3_p1"></p>
+        <p data-i18n="step5_9_3_p2"></p>
+        <p data-i18n="step2_3_2_q1">Il problema è risolto?</p>
+        <div class="image-links">        
+          <a href="images/step 5-9-3 .png" target="_blank" rel="noopener">
+            <img src="images/step 5-9-3 .png" class="help-image" alt="Step 5-9-3" data-i18n="alt_step5_9_3" data-i18n-attr="alt"/>
+          </a>
+        </div>
+        <div class="buttons-center">
+          <button type="button" class="btn" data-next="step2_0" data-i18n="yes">SÌ / YES</button>
+          <button type="button" class="btn" data-next="step5_9_4" data-i18n="no">NO</button>
+        </div>
+        <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+      </section>
+
+      <section id="step5_9_4" class="step">
+        <h2 class="step-title">Assistenza SHAMIR</h2>
+        <p data-i18n="step5_9_4_p1"></p>
+        <div class="bottom-actions">
+          <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+          <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
+        </div>
+      </section>
+
+      <!-- STEP 3-2-6 (Escalation) -->
+      <section id="step3_2_6" class="step">
+        <h2 class="step-title" data-i18n="title_step3_2_6">Escalation 3rd Level Support</h2>
+        <p data-i18n="step3_2_6_p1">Assegnare il ticket a <strong>"SSS North America - POS Triage - 3rd Level Support"</strong></p>
+        <p data-i18n="step3_2_6_cat"><strong>Categoria:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA</p>
+        <div class="bottom-actions">
+          <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
+          <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
+        </div>
+      </section>
+
+    </main>
+
+    <div id="imageModal" class="modal" onclick="closeModal()">
+      <img class="modal-content" id="imgFull" alt="Ingrandimento" onclick="event.stopPropagation()">
+    </div>
+  </div>
+
+  <script>
+const translations = {
+  it: {
+    app_title: "Guida Supporto Tecnico: TRACER",
+    lang_select_title: "Seleziona la lingua / Select language",
+    btn_next: "PROSEGUI",
+    btn_back: "RITORNA",
+    btn_copy: "COPIA LOG TROUBLESHOOTING",
+    yes: "SÌ",
+    no: "NO",
+    yes_off: "SÌ (Stato OFF)",
+    no_on: "NO (Stato ON)",
+    copy_success: "Cronologia troubleshooting copiata con successo.",
+    copy_error: "Errore nella copia degli appunti.",
+    step0_p1: "Analisi richiesta supporto tecnico per malfunzionamento Tracer.",
+    step1_p1: "Eseguire test di connettività: verificare se il nodo <strong>SYSTECH</strong> risponde al ping da Personality Server.",
+    step1_q1: "Il dispositivo SYSTECH è raggiungibile?",
+    step1_1_li1: "Localizzare il dispositivo Moxa (convertitore seriale/IP nero).",
+    step1_1_li2: "Scollegare il cavo di alimentazione e ricollegarlo",
+    step1_1_li3: "Staccare il cavo ethernet e ricollegarlo",
+    step1_1_q1: "SYSTECH è tornato pingabile?",
+    step1_2_p1: "Assegnare il ticket a <strong>'ITALY - LOCAL IT TEAM'</strong>",
+    title_step0: "Apertura Ticket Tracer",
+    title_step1: "Verifica Connettività SYSTECH",
+    title_step1_1: "Ripristino Hardware Moxa",
+    title_step1_2: "Escalation Local IT",
+    title_step2: "Localizzazione dell'Errore",
+    title_step2_1: "Identificazione Modello Tracer",
+    title_step2_2: "Codici Errore Hoya",
+    title_step2_3: "Riavvio Servizi Personality Server",
+    title_step2_3_1: "Configurazione Startup Systech",
+    title_step2_3_2: "Riavvio Servizio Systech",
+    title_step2_3_3: "Inizializzazione Hoya GT-3000",
+    title_step2_3_4: "Hoya: Configurazione Porta (H100)",
+    title_step2_3_5: "Hoya: Abilitazione Barcode",
+    title_step2_3_6: "Hoya: Parametri Comunicazione (H101)",
+    title_step2_3_7: "Hoya: Impostazione Protocollo (H103)",
+    title_step2_3_8: "Hoya: Verifica Parametri OMA (H104)",
+    title_step2_3_9: "Hoya: Salvataggio e Test Finale",
+    title_step2_4: "Errori Display Essilor",
+    title_step2_4_1: "Reset Errore Essilor",
+    title_step3_1: "Analisi Errori LPA",
+    title_step3_1_1: "Accesso Interfaccia SYSTECH",
+    title_step3_1_2: "Login Interfaccia Moxa",
+    title_step3_1_3: "Monitoraggio Segnali Async",
+    title_step3_1_4: "Verifica Cablaggio Hardware",
+    title_step3_1_5: "Riavvio Servizi GLOBAL-CUSORDER",
+    title_step3_1_6: "Esecuzione Startup Configuration",
+    title_step3_1_7: "Esecuzione Service Restart",
+    title_step3_1_8: "Protocollo Essilor (Combinazione Tasti)",
+    title_step3_1_9: "Essilor: Menu Communicate",
+    title_step3_1_10: "Essilor: Menu Protocol",
+    title_step3_1_11: "Essilor: Verifica Videata Protocollo",
+    title_step3_1_12: "Essilor: Selezione Pc OmaRs232",
+    title_step3_1_13: "Essilor: Configurazione Baud Rate",
+    title_step3_3_1: "Impostazioni Moxa Avanzate",
+    title_step3_3_3: "Moxa: Basic & Network Settings",
+    step1_2_p2: "<strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Essilor > Other",
+    step1_2_p3: "<strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Hoya > Other",
+    step2_q1: "Dove viene visualizzato l’errore?",
+    step2_b1: "Errore sul display",
+    step2_b2: "LPA Sedico",
+    step2_b3: "SHAMIR",
+    step2_b4: "OPSYSWEB",
+    step2_b5: "No Errore",
+    step2_b6: "ORDINI IN STATO STAGED",
+    step4_q1: "Quale Tracer sta usando lo store?",
+    step4_1_p1: "Questo è un esempio di configurazione con il Tracciatore ESSILOR TESS.<br>Se ci sono problemi nella sagomatura, scegliere TRACER OMA GENERICO dall’elenco dei Tracciatori.",
+    step4_2_p1: "Questo è un esempio di configurazione con il Tracciatore HOYA GT-3000.<br>Se ci sono problemi durante la lettura della montatura, puoi scegliere TRACER OMA GENERICO dall’elenco.",
+    step4_3_p1: "Dopo aver salvato le impostazioni, tutte le informazioni inserite compariranno automaticamente nella parte inferiore della schermata.",
+    title_step3_3_5: "Moxa: Serial Port Settings",
+    title_step3_3_6: "Moxa: Operating Settings",
+    title_step3_3_7: "Verifica Risoluzione Moxa",
+    title_step3_2_1: "LPA: Gestione Profili Utente",
+    title_step3_2_2: "LPA: Associate Setup e Abilitazioni",
+    title_step4: "Configurazione Portale SHAMIR",
+    title_step4_1: "Shamir: Configurazione Essilor Tess",
+    title_step4_2: "Shamir: Configurazione Hoya GT-3000",
+    title_step4_3: "Salvataggio Impostazioni Shamir",
+    title_step4_3_1: "Verifica Gestione Dispositivi",
+    title_step4_3_2: "Identificazione Porte COM",
+    title_step4_3_3: "Creazione Nuovo Ordine Sagoma",
+    title_step4_3_4: "Acquisizione Dati da Tracer",
+    title_step4_3_5: "Monitoraggio Sezione Sagome",
+    title_step4_3_6: "Procedura d'Uso Operativa",
+    step4_3_1_p1: "Apri il Pannello di controllo e scrivi Gestione dispositivi nella barra di ricerca.",
+    step4_3_2_p1: "Nella schermata che si apre, cerca la voce <strong>Porte (COM e LPT)</strong>.<br>Il numero della porta indicato accanto all’adattatore (ad esempio COM3) è lo stesso numero che dovrai inserire come Porta COM nelle impostazioni del portale OPSYSWEB.<br><br><strong>Importante:</strong> se questa voce non compare, il problema dipende dal cavo o dall’adattatore. Prova a collegare il cavo a un’altra porta USB dello stesso computer oppure a usare un altro adattatore. Se il dispositivo non viene ancora riconosciuto, sarà necessario sostituire il cavo o l’adattatore.",
+    step4_3_3_p1: "<strong>COME EFFETTUARE UNA TRACCIATURA</strong><br><br>Apri il programma e, dal menu a sinistra, clicca su <strong>Nuovo ordine</strong>. Poi seleziona <strong>Aggiungi sagoma</strong>.",
+    step4_3_4_p1: "Poi clicca sul pulsante <strong>Acquisizione</strong> e scegli l’opzione <strong>Acquisizione da tracer</strong>.",
+    title_step5: "Configurazione OPSYSWEB",
+    title_step5_1: "Menu Ordini Lenti",
+    title_step5_2: "Menu Aggiunta Forma",
+    title_step5_3: "Selezione Lettore",
+    title_step5_4: "Configurazione Parametri Dispositivo",
+    title_step5_5: "Installazione Plugin T2WS",
+    title_step5_6: "Verifica Icona Programma Attivo",
+    step4_3_5_p1: "Infine, vai nella sezione <strong>Sagome</strong> e attendi che il tracciatore invii i dati.",
+    step4_3_6_p1: "<strong>Uso del Tracer ESSILOR TESS</strong><ul><li>Accendi il dispositivo e assicurati che il display sia pronto.</li><li>Inserisci la montatura nel tracer e fissala bene con i supporti.</li><li>Non serve inserire alcun codice o numero.</li><li>Seleziona l’opzione A/B sul portale corretto.</li><li>Premi il grande pulsante verde per iniziare.</li><li>Quando senti un bip, la lettura è terminata.</li><li>Attendi che il simbolo iniziale ricompaia sul display.</li><li>Controlla che la forma della montatura appaia nel programma.</li></ul><br><strong>Uso del Tracer HOYA GT-3000</strong><ul><li>Accendi il dispositivo e verifica che sia pronto a misurare.</li><li>Seleziona l’opzione A/B sul portale corretto.</li><li>Inserisci la montatura nel tracer e fissala bene.</li><li>Non serve inserire alcun codice.</li><li>Premi Start per avviare la lettura.</li><li>Quando richiesto, passa un codice a barre qualsiasi con lo scanner (serve solo per completare la procedura).</li><li>Attendi che il dispositivo torni pronto.</li><li>Controlla che la forma della montatura compaia nel programma.</li></ul>",
+    step4_3_7_p1: "Indicare allo store di chiamare il numero di assistenza SHAMIR <strong>049.723102</strong>. Risolvere il ticket.",
+    step5_p1: "Programma OPSYSWEB",
+    step5_1_p1: "Dopo aver effettuato l’accesso, scorri la pagina principale fino a trovare la voce <strong>Ordini lenti</strong>.",
+    step5_2_p1: "Poi continua a scorrere la pagina fino a trovare il menu <strong>Aggiungere forma</strong>.",
+    step5_3_p1: "Da qui selezionare la voce <strong>LETTORE</strong>.",
+    step5_4_p1: "Se è già stato inserito o configurato un tracciatore in precedenza, potrai vedere una riga che mostra le impostazioni già salvate.<br><br>Cliccando su <strong>Configura</strong>, potrai modificare il tipo di dispositivo, la porta di collegamento e la velocità di connessione.<br><br><strong>Importante:</strong> in base al tipo di dispositivo utilizzato, scegli sempre il modello corretto: <strong>ESSILOR TESS (OMA)</strong> se usi un tracciatore ESSILOR, oppure <strong>HOYA GT-3000 (OMA)</strong> se usi un tracciatore HOYA.",
+    step5_5_p1: "Se non è stato ancora aggiunto alcun tracciatore, sarà necessario inserirne uno nuovo.<br>Per farlo, clicca su <strong>Installazione nuovo plug‑in</strong> e poi su <strong>Download T2WS.exe</strong>.<br><br><strong>Importante:</strong> se il computer utilizza Windows 11, puoi scaricare una versione specifica del programma dal seguente indirizzo:<br>http://10.202.73.18/dist/EssilorOpsysWeb/<br>Il file da usare in questo caso è <strong>T2WS_Windows_11.exe</strong>, fornito da Essilor.",
+    title_step5_7: "Generazione e Attivazione Token",
+    title_step5_8: "Inserimento Token di Attivazione",
+    title_step5_9: "Parametri di Connessione COM",
+    title_step5_9_1: "Ricerca Hardware Porta COM",
+    title_step5_9_2: "Verifica Porte (COM e LPT)",
+    title_step5_9_3: "Esecuzione Tracciatura Finale",
+    title_step3_2_6: "Escalation 3rd Level Support",
+    step5_6_p1: "Una volta completata l’installazione, nell’angolo in basso a destra dello schermo comparirà l’icona del programma attivo, rappresentata da un simbolo a forma di tracciatore ESSILOR TESS.",
+    step5_7_p1: "Cliccate con il <strong>TASTO DESTRO</strong> su quest’ultima e selezionate la voce <strong>SHOW TOKEN</strong>. Verrà proposto il popup sotto riportato.",
+    step5_8_p1: "Copia il codice usando il pulsante <strong>Copy to Clipboard</strong>, poi incollalo nel campo mostrato nell’immagine e premi <strong>Attiva</strong>.",
+    step5_9_p1: "A questo punto torna alla sezione <strong>Lettore</strong>, clicca su <strong>Aggiungi lettore</strong> e poi su <strong>Configura</strong>.<br>Nella parte destra della schermata imposta questi dati:<ul><li>scegli il dispositivo corretto: GT‑3000 OMA se usi HOYA, oppure ESSILOR TESS OMA se usi TESS;</li><li>seleziona il tipo di collegamento, che deve essere COM;</li><li>controlla quale porta COM viene utilizzata dal computer seguendo la guida indicata alla fine;</li><li>imposta la velocità giusta: 9600 per HOYA oppure 19200 per TESS;</li><li>inserisci la porta COM trovata (ad esempio COM4);</li><li>infine, salva le impostazioni.</li></ul><br><strong>Importante:</strong> per funzionare correttamente, il programma ESSILOR deve essere installato indicando il nome del computer. Se questo dato manca, sarà necessario disinstallare il programma da <em>Pannello di controllo > Programmi e funzionalità > T2WS Version</em>, e poi procedere nuovamente con il download e l’installazione.",
+    step5_9_3_p1: "<strong>COME EFFETTUARE UNA TRACCIATURA</strong><br><br>Dal portale web, nella pagina principale, clicca su <strong>Ordini lenti</strong>. Poi scorri la pagina fino a trovare il menu <strong>Aggiungere forma</strong>. Da lì seleziona <strong>Lettore</strong>: il tracciatore configurato in precedenza comparirà automaticamente sullo schermo.",
+    step5_9_3_p2: "[Dal Tracer ESSILOR TESS]<ul><li>Partire dallo stato di N° a DISPLAY</li><li>Posizionare la MONTATURA all’interno del Tracer e fissarla con i blocchi.</li><li>NON sarà necessario alcun inserimento o digitazione di GerberID.</li><li>Impostare l’A/B SWITCH sul portale interessato.</li><li>Premi il tasto VERDE GRANDE per avviare la tracciatura.</li><li>Premere in parallelo il tasto PLAY dal nostro Web Portal OPSYSWEB.</li><li>All’emissione del BEEP, il Tracer avrà TERMINATO il processo di acquisizione del frame.</li><li>Attendere la ricomparsa dell’icona N° in basso a dx sul display.</li><li>Controllare la comparsa del FRAME sul nostro Web Portal.</li></ul><br>[Dal Tracer HOYA GT-3000]<ul><li>Partire dallo stato di AUTO MISURAZIONE a DISPLAY.</li><li>Impostare l’A/B SWITCH sul portale interessato.</li><li>Posizionare la MONTATURA all’interno del Tracer e fissarla con i blocchi.</li><li>NON sarà necessario alcun inserimento o digitazione di GerberID.</li><li>Premi il tasto START per avviare la tracciatura.</li><li>Premere in parallelo il tasto PLAY dal nostro Web Portal OPSYSWEB.</li><li>Alla comparsa di READ JOB N° utilizzare lo Scanner per FLASHARE un BARCODE di riferimento (giusto a carattere procedurale, NON serve un GerberID).</li><li>Attendere la ricomparsa della voce AUTO MISURAZIONE a DISPLAY.</li><li>Controllare la comparsa del FRAME sul nostro Web Portal.</li></ul>",
+    step5_9_4_p1: "Indicare allo store di chiamare il numero di assistenza SHAMIR <strong>049.723102</strong>. Risolvere il ticket.",
+    step2_1_q1: "Quale Tracer sta usando lo store?",
+    step2_2_q1: "Qual è l'errore visualizzato?",
+    tr_hoya: "HOYA GT-3000",
+    tr_essilor: "ESSILOR TESS",
+    err_64: "Errore 64",
+    err_92: "Errore 92/80",
+    err_opt: "OPT SAVING [NUM]",
+    err_tec: "TEC [NUM]",
+    err_lpa1: "Tracer could not be completed",
+    err_lpa2: "Operation not allowed for the user",
+    step2_3_p1: "Andare su Tools nel server GLOBAL-CUSORDER.",
+    step2_3_1_p1: "Ricercare il comando SYSTECH STARTUP FILE CONFIGURATION ed avviarlo con Run This Command. Attendere il termine del processo.",
+    step2_3_2_p1: "Ricercare il comando SYSTECH SERVICE RESTART ed avviarlo con Run This Command. Attendere il termine del processo.",
+    step2_3_2_q1: "Il problema è risolto?",
+    step2_3_5_p1: "Con il tasto SELECT impostare l’opzione BARCODE. Per abilitarlo alla funzione BARCODE>BARCODE premete i tasti UP & DOWN, poi CONFERMATE con START.",
+    step2_3_6_p1: "PREMETE RESET per USCIRE dal menu. Poi cercate H101 SET COMM e confermate con START. Dovrebbero esserci le impostazioni 9600 N 1.",
+    step2_3_7_p1: "PREMETE RESET per USCIRE dal menu. Poi cercate H103 SET PROTOCOL e confermate con START. Selezionare DATA OMA.",
+    step2_3_8_p1: "Cercare H104 SET OMA e confermare con START. Verificare i parametri OMA.",
+    hoya_conf_1: "SPEGNETE e RIACCENDETE il Tracciatore.",
+    hoya_conf_2: "Assicuratevi che sia in AUTO MEASURE &lt;START&gt;.",
+    hoya_conf_3: "TENETE PREMUTO SELECT e PREMETE 3 VOLTE ITEM. Poi PREMETE START per il MENU CONFIGURAZIONE.",
+    hoya_conf_4: "Cercare <strong>H100 SET PORT</strong> e confermare con START.",
+    hoya_conf_5: "Punti da CORREGGERE: POINT: 400, CIRC: ON, HBOX: ON, VBOX: ON. SPEGNETE e RIACCENDETE il Tracciatore per COMPLETARE la procedura.",
+    step2_3_9_q1: "Il problema è risolto?",
+    step2_0_p1: "Risolvere il ticket.",
+    step2_4_q1: "Qual è l'errore che esce sul display?",
+    step2_4_1_p1: "Indicare allo store di premere il tasto Verde spuntato sulla tastiera del tracciatore.",
+    step2_4_1_q1: "Il problema è risolto?",
+    step3_1_q1: "Quale errore visualizza?",
+    step3_1_3_p1: "Cliccare su 'Monitor' e 'Async'.",
+    step3_1_3_q1: "Uno dei valori 'DSR' e 'CTS' è nello stato 'OFF'?",
+    step3_1_1_p1: "Andare su Personality server e individuare la voce 'Systech' e cliccare sul IP.",
+    step3_1_2_p1: "Nel campo Password inserire 'moxa'.",
+    step3_1_4_p1: "Verificare il cavo tra MOXA e AB switch. Verificare se AB switch è impostato su Sedico.",
+    step3_1_4_q1: "i valori 'DSR' e 'CTS' sono tornati ON e il problema è risolto",
+    step3_1_8_p1: "Selezionare contemporaneamente Tasto 1 e Tasto VERDE SPUNTATO su ESSILOR TESS.",
+    step3_1_9_p1: "Premere Tasto 6 (COMMUNICATE). Confermare con VERDE.",
+    step3_1_10_p1: "Premere Tasto 1 (PROTOCOL). Confermare con VERDE.",
+    step3_1_11_p1: "Possibile che si possa presentare la videata seguente:",
+    step3_1_12_p1: "Premere Tasto 1 (PC OmaETH). Confermare con VERDE. Ricercare Pc OmaRs232 e confermare.",
+    step3_1_13_p1: "Tasto ROSSO per uscire. Poi COMMUNICATE -> PARAMETERS -> PC PORT. Baud: 9600 (HOYA) o 19200 (TESS).",
+    step3_3_1_p1: "Verificare impostazioni moxa su Personality Server (IP Systech).",
+    step3_3_3_p1: "Assicurarsi che BASIC SETTINGS e NETWORK SETTINGS siano settati correttamente.",
+    step3_3_5_p1: "SERIAL SETTINGS > PORT 1: Baud rate HOYA 9600, TESS 19200. Assicurarsi che sia settato come da immagine e confermare con SUBMIT.",
+    step3_3_6_p1: "Assicurarsi che il menu OPERATING SETTINGS > PORT 1 sia settato come da immagine. Confermare poi con SUBMIT.",
+    step3_3_7_q1: "Il problema è risolto?",
+    step3_2_1_p1: "Problema legato all'utente. Accedere a LPA con credenziali Store Manager.",
+    step3_2_2_p1: "Entrare in Associate Setup e modificare le abilitazioni degli utenti.",
+    step3_2_5_p1: "Risolvere il ticket (CIAO Optical > Toolkit - LPA).",
+    step3_2_6_p1: "Assegnare il ticket a SSS North America - POS Triage.",
+    step3_2_6_cat: "<strong>Categoria:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA",
+    alt_step2_3_3: "Configurazione Hoya Step 2-3-3",
+    alt_step2_3_4: "Configurazione Hoya Step 2-3-4",
+    alt_step2_3_5: "Configurazione Hoya Step 2-3-5",
+    alt_step2_3_6: "Configurazione Hoya Step 2-3-6",
+    alt_step2_3_7: "Configurazione Hoya Step 2-3-7",
+    alt_step2_3_8: "Configurazione Hoya Step 2-3-8",
+    alt_step2_3_9: "Configurazione Hoya Step 2-3-9",
+    alt_step3_3_3: "Impostazioni Moxa Step 3-3-3",
+    alt_step3_3_5: "Impostazioni Moxa Step 3-3-5",
+    alt_step4_3_6: "Utilizzo Tracer Step 4-3-6",
+    alt_step5_7: "Mostra Token Step 5-7"
+  },
+  en: {
+    app_title: "TRACER Troubleshooting",
+    lang_select_title: "Select language / Seleziona la lingua",
+    btn_next: "NEXT",
+    btn_back: "Back",
+    btn_copy: "Copy history",
+    yes: "YES",
+    no: "NO",
+    yes_off: "YES / OFF",
+    no_on: "NO / ON",
+    copy_success: "Troubleshooting copied to clipboard!",
+    copy_error: "Error copying to clipboard.",
+    step0_p1: "The store reported an issue with the tracer.",
+    step1_p1: "Access Personality Server and check if SYSTECH is pingable.",
+    step1_q1: "Is SYSTECH pingable?",
+    step1_1_li1: "Identify the Moxa (black box)",
+    step1_1_li2: "Unplug power cable and plug it back",
+    step1_1_li3: "Unplug ethernet cable and plug it back",
+    step1_1_q1: "Is SYSTECH pingable now?",
+    step1_2_p1: "Assign ticket to <strong>'ITALY - LOCAL IT TEAM'</strong>",
+    title_step0: "Tracer Ticket Opening",
+    title_step1: "SYSTECH Connectivity Check",
+    title_step1_1: "Moxa Hardware Reset",
+    title_step1_2: "Local IT Escalation",
+    title_step2: "Error Localization",
+    title_step2_1: "Tracer Model Identification",
+    title_step2_2: "Hoya Error Codes",
+    title_step2_3: "Personality Server Service Restart",
+    title_step2_3_1: "Systech Startup Config",
+    title_step2_3_2: "Systech Service Restart",
+    title_step2_3_3: "Hoya GT-3000 Initialization",
+    title_step2_3_4: "Hoya: Set Port (H100)",
+    title_step2_3_5: "Hoya: Barcode Enable",
+    title_step2_3_6: "Hoya: Communication Parameters (H101)",
+    title_step2_3_7: "Hoya: Protocol Setting (H103)",
+    title_step2_3_8: "Hoya: OMA Parameter Check (H104)",
+    title_step2_3_9: "Hoya: Final Save & Test",
+    title_step2_4: "Essilor Display Errors",
+    title_step2_4_1: "Essilor Error Reset",
+    title_step3_1: "LPA Error Analysis",
+    title_step3_1_1: "SYSTECH Interface Access",
+    title_step3_1_2: "Moxa Interface Login",
+    title_step3_1_3: "Async Signal Monitoring",
+    title_step3_1_4: "Hardware Cabling Check",
+    title_step3_1_5: "GLOBAL-CUSORDER Service Restart",
+    title_step3_1_6: "Startup Configuration Execution",
+    title_step3_1_7: "Service Restart Execution",
+    title_step3_1_8: "Essilor Protocol (Key Combo)",
+    title_step3_1_9: "Essilor: Communicate Menu",
+    title_step3_1_10: "Essilor: Protocol Menu",
+    title_step3_1_11: "Essilor: Protocol Screen Check",
+    title_step3_1_12: "Essilor: Pc OmaRs232 Selection",
+    title_step3_1_13: "Essilor: Baud Rate Config",
+    title_step3_3_1: "Advanced Moxa Settings",
+    title_step3_3_3: "Moxa: Basic & Network Settings",
+    step1_2_p2: "<strong>Category:</strong> IN STORE TECH > HW > Tracer - Essilor > Other",
+    step1_2_p3: "<strong>Category:</strong> IN STORE TECH > HW > Tracer - Hoya > Other",
+    step2_q1: "Where is the error displayed?",
+    step2_b1: "Display error message",
+    step2_b2: "LPA Sedico",
+    step2_b3: "SHAMIR",
+    step2_b4: "OPSYSWEB",
+    step2_b5: "No Error",
+    step2_b6: "STAGED ORDERS",
+    step4_q1: "Which Tracer is the store using?",
+    step4_1_p1: "This is a configuration example with the ESSILOR TESS Tracer.<br>If there are issues with the shape, choose GENERIC OMA TRACER from the list.",
+    step4_2_p1: "This is a configuration example with the HOYA GT-3000 Tracer.<br>If there are issues during frame reading, you can choose GENERIC OMA TRACER from the list.",
+    step4_3_p1: "After saving the settings, all entered information will automatically appear at the bottom of the screen.",
+    title_step3_3_5: "Moxa: Serial Port Settings",
+    title_step3_3_6: "Moxa: Operating Settings",
+    title_step3_3_7: "Moxa Resolution Check",
+    title_step3_2_1: "LPA: User Profile Management",
+    title_step3_2_2: "LPA: Associate Setup & Permissions",
+    title_step4: "SHAMIR Portal Configuration",
+    title_step4_1: "Shamir: Essilor Tess Config",
+    title_step4_2: "Shamir: Hoya GT-3000 Config",
+    title_step4_3: "Shamir Settings Save",
+    title_step4_3_1: "Device Manager Check",
+    title_step4_3_2: "COM Port Identification",
+    title_step4_3_3: "New Shape Order Creation",
+    title_step4_3_4: "Data Capture from Tracer",
+    title_step4_3_5: "Shape Section Monitoring",
+    title_step4_3_6: "Operational Usage Procedure",
+    step4_3_1_p1: "Open the Control Panel and type Device Manager in the search bar.",
+    step4_3_2_p1: "In the screen that opens, look for <strong>Ports (COM & LPT)</strong>.<br>The port number shown next to the adapter (e.g., COM3) is the same number you must enter as the COM Port in the OPSYSWEB portal settings.<br><br><strong>Important:</strong> if this entry does not appear, the problem depends on the cable or adapter. Try connecting the cable to another USB port on the same computer or using another adapter. If the device is still not recognized, the cable or adapter will need to be replaced.",
+    step4_3_3_p1: "<strong>HOW TO PERFORM A TRACING</strong><br><br>Open the program and, from the menu on the left, click on <strong>New Order</strong>. Then select <strong>Add Shape</strong>.",
+    step4_3_4_p1: "Then click on the <strong>Capture</strong> button and choose the <strong>Capture from tracer</strong> option.",
+    title_step5: "OPSYSWEB Configuration",
+    title_step5_1: "Lens Orders Menu",
+    title_step5_2: "Add Shape Menu",
+    title_step5_3: "Reader Selection",
+    title_step5_4: "Device Parameter Config",
+    title_step5_5: "T2WS Plugin Installation",
+    title_step5_6: "Active Program Icon Check",
+    step4_3_5_p1: "Finally, go to the <strong>Shapes</strong> section and wait for the tracer to send the data.",
+    step4_3_6_p1: "<strong>Using the ESSILOR TESS Tracer</strong><ul><li>Turn on the device and ensure the display is ready.</li><li>Insert the frame into the tracer and fix it well with the supports.</li><li>No need to enter any code or number.</li><li>Select the A/B option on the correct portal.</li><li>Press the large green button to start.</li><li>When you hear a beep, the reading is finished.</li><li>Wait for the initial symbol to reappear on the display.</li><li>Check that the frame shape appears in the program.</li></ul><br><strong>Using the HOYA GT-3000 Tracer</strong><ul><li>Turn on the device and verify that it is ready to measure.</li><li>Select the A/B option on the correct portal.</li><li>Insert the frame into the tracer and fix it well.</li><li>No need to enter any code.</li><li>Press Start to start the reading.</li><li>When prompted, scan any barcode with the scanner (only needed to complete the procedure).</li><li>Wait for the device to be ready again.</li><li>Check that the frame shape appears in the program.</li></ul>",
+    step4_3_7_p1: "Instruct the store to call SHAMIR support at <strong>049.723102</strong>. Resolve the ticket.",
+    step5_p1: "OPSYSWEB Program",
+    step5_1_p1: "After logging in, scroll down the main page until you find the Lens Orders entry.",
+    step5_2_p1: "Then continue scrolling the page until you find the <strong>Add Shape</strong> menu.",
+    step5_3_p1: "From here, select the <strong>READER (LETTORE)</strong> entry.",
+    step5_4_p1: "If a tracer has already been entered or configured previously, you will see a row showing the settings already saved.<br><br>By clicking on <strong>Configure</strong>, you can modify the type of device, the connection port, and the connection speed.<br><br><strong>Important:</strong> based on the type of device used, always choose the correct model: <strong>ESSILOR TESS (OMA)</strong> if using an ESSILOR tracer, or <strong>HOYA GT-3000 (OMA)</strong> if using a HOYA tracer.",
+    step5_5_p1: "If no tracer has been added yet, you will need to add a new one.<br>To do this, click on <strong>Install new plug-in</strong> and then <strong>Download T2WS.exe</strong>.<br><br><strong>Important:</strong> if the computer uses Windows 11, you can download a specific version of the program from the following address:<br>http://10.202.73.18/dist/EssilorOpsysWeb/<br>The file to use in this case is <strong>T2WS_Windows_11.exe</strong>, provided by Essilor.",
+    title_step5_7: "Token Generation & Activation",
+    title_step5_8: "Activation Token Entry",
+    title_step5_9: "COM Connection Parameters",
+    title_step5_9_1: "COM Port Hardware Search",
+    title_step5_9_2: "Ports (COM & LPT) Check",
+    title_step5_9_3: "Final Tracing Execution",
+    title_step3_2_6: "3rd Level Support Escalation",
+    step5_6_p1: "Once the installation is complete, the active program icon will appear in the bottom right corner of the screen, represented by an ESSILOR TESS tracer symbol.",
+    step5_7_p1: "Right-click on the latter and select the <strong>SHOW TOKEN</strong> entry. The popup shown below will be proposed.",
+    step5_8_p1: "Copy the code using the <strong>Copy to Clipboard</strong> button, then paste it into the field shown in the image and press <strong>Activate</strong>.",
+    step5_9_p1: "Now return to the <strong>Reader</strong> section, click on <strong>Add Reader</strong> and then <strong>Configure</strong>.<br>On the right side of the screen, set these data:<ul><li>choose the correct device: GT-3000 OMA if using HOYA, or ESSILOR TESS OMA if using TESS;</li><li>select the connection type, which must be COM;</li><li>check which COM port is used by the computer following the guide at the end;</li><li>set the correct speed: 9600 for HOYA or 19200 for TESS;</li><li>enter the COM port found (e.g., COM4);</li><li>finally, save the settings.</li></ul><br><strong>Important:</strong> to work correctly, the ESSILOR program must be installed indicating the computer name. If this data is missing, it will be necessary to uninstall the program from <em>Control Panel > Programs and Features > T2WS Version</em>, and then proceed again with the download and installation.",
+    step5_9_3_p1: "<strong>HOW TO PERFORM A TRACING</strong><br><br>From the web portal, on the main page, click on <strong>Slow Orders</strong>. Then scroll down the page until you find the <strong>Add Shape</strong> menu. From there select <strong>Reader</strong>: the previously configured tracer will automatically appear on the screen.",
+    step5_9_3_p2: "[From ESSILOR TESS Tracer]<ul><li>Start from the N° state on DISPLAY</li><li>Position the FRAME inside the Tracer and fix it with the blocks.</li><li>NO GerberID entry or typing will be required.</li><li>Set the A/B SWITCH on the relevant portal.</li><li>Press the LARGE GREEN button to start tracing.</li><li>Press the PLAY button on our OPSYSWEB Web Portal in parallel.</li><li>When the BEEP sounds, the Tracer will have FINISHED the frame acquisition process.</li><li>Wait for the N° icon to reappear in the bottom right on the display.</li><li>Check the appearance of the FRAME on our Web Portal.</li></ul><br>[From HOYA GT-3000 Tracer]<ul><li>Start from the AUTO MEASURE state on DISPLAY.</li><li>Set the A/B SWITCH on the relevant portal.</li><li>Position the FRAME inside the Tracer and fix it with the blocks.</li><li>NO GerberID entry or typing will be required.</li><li>Press the START button to start tracing.</li><li>Press the PLAY button on our OPSYSWEB Web Portal in parallel.</li><li>When READ JOB N° appears, use the Scanner to FLASH any reference BARCODE (just for procedure, NO GerberID needed).</li><li>Wait for the AUTO MEASURE entry to reappear on the DISPLAY.</li><li>Check the appearance of the FRAME on our Web Portal.</li></ul>",
+    step5_9_4_p1: "Instruct the store to call SHAMIR support at <strong>049.723102</strong>. Resolve the ticket.",
+    step2_1_q1: "Which Tracer is the store using?",
+    step2_2_q1: "What is the error displayed?",
+    tr_hoya: "HOYA GT-3000",
+    tr_essilor: "ESSILOR TESS",
+    err_64: "Error 64",
+    err_92: "Error 92/80",
+    err_opt: "OPT SAVING [NUM]",
+    err_tec: "TEC [NUM]",
+    err_lpa1: "Tracer could not be completed",
+    err_lpa2: "Operation not allowed for the user",
+    step2_3_p1: "Go to Tools in GLOBAL-CUSORDER server.",
+    step2_3_1_p1: "Search for the SYSTECH STARTUP FILE CONFIGURATION command and start it with Run This Command. <br>Wait for the process to finish.",
+    step2_3_2_p1: "Search for the SYSTECH SERVICE RESTART command and start it with Run This Command. <br>Wait for the process to finish.",
+    step2_0_p1: "Resolve the ticket.",
+    step2_3_2_q1: "Is the problem solved?",
+    step2_3_5_p1: "Use SELECT to set the BARCODE option. To enable BARCODE>BARCODE press UP & DOWN, then CONFIRM with START.",
+    step2_3_6_p1: "Press RESET to EXIT. Search for H101 SET COMM and confirm with START. Settings should be 9600 N 1.",
+    step2_3_7_p1: "Press RESET to EXIT. Search for H103 SET PROTOCOL and confirm with START. Select DATA OMA.",
+    step2_3_8_p1: "Look for H104 SET OMA and confirm with START. Verify OMA parameters.",
+    hoya_conf_1: "Turn the Tracer OFF and then ON again.",
+    hoya_conf_2: "Ensure it is in AUTO MEASURE &lt;START&gt;.",
+    hoya_conf_3: "HOLD SELECT and PRESS ITEM 3 TIMES. Then PRESS START for the CONFIGURATION MENU.",
+    hoya_conf_4: "Look for <strong>H100 SET PORT</strong> and confirm with START.",
+    hoya_conf_5: "Points to CORRECT: POINT: 400, CIRC: ON, HBOX: ON, VBOX: ON. Turn the Tracer OFF and then ON again to COMPLETE the procedure.",
+    step2_3_9_q1: "Is the problem solved?",
+    step2_4_q1: "What is the error appearing on the display?",
+    step2_4_1_p1: "Instruct the store to press the Green Check button on the tracer's keyboard.",
+    step2_4_1_q1: "Is the problem solved?",
+    step3_1_q1: "Which error is displayed?",
+    step3_1_3_p1: "Click on 'Monitor' and 'Async'.",
+    step3_1_3_q1: "Is one of the 'DSR' and 'CTS' values in 'OFF' state?",
+    step3_1_1_p1: "Access Personality Server, find 'Systech' and click on the IP.",
+    step3_1_2_p1: "Enter 'moxa' in the Password field.",
+    step3_1_4_p1: "Check the cable between MOXA and AB switch. Verify if AB switch is set to Sedico.",
+    step3_1_4_q1: "Have 'DSR' and 'CTS' values returned to ON and is the problem resolved?",
+    step3_1_8_p1: "Press Key 1 and GREEN CHECK simultaneously on ESSILOR TESS.",
+    step3_1_9_p1: "Press Key 6 (COMMUNICATE). Confirm with GREEN.",
+    step3_1_10_p1: "Press Key 1 (PROTOCOL). Confirm with GREEN.",
+    step3_1_11_p1: "The following screen may appear:",
+    step3_1_12_p1: "Press Key 1 (PC OmaETH). Confirm with GREEN. Find Pc OmaRs232 and confirm.",
+    step3_1_13_p1: "RED Key to exit. Then COMMUNICATE -> PARAMETERS -> PC PORT. Baud: 9600 (HOYA) or 19200 (TESS).",
+    step3_3_1_p1: "Verify moxa settings on Personality Server (Systech IP).",
+    step3_3_3_p1: "Ensure BASIC SETTINGS and NETWORK SETTINGS are correctly set.",
+    step3_3_5_p1: "SERIAL SETTINGS > PORT 1: Baud rate HOYA 9600, TESS 19200. Ensure it is set as shown in the image and confirm with SUBMIT.",
+    step3_3_6_p1: "Ensure the OPERATING SETTINGS > PORT 1 menu is set as shown in the image. Then confirm with SUBMIT.",
+    step3_3_7_q1: "Is the problem solved?",
+    step3_2_1_p1: "User-related issue. Access LPA with Store Manager credentials.",
+    step3_2_2_p1: "Enter Associate Setup and modify user permissions.",
+    step3_2_5_p1: "Resolve the ticket (CIAO Optical > Toolkit - LPA).",
+    step3_2_6_p1: "Assign ticket to SSS North America - POS Triage.",
+    step3_2_6_cat: "<strong>Category:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA",
+    alt_step2_3_3: "Hoya Configuration Step 2-3-3",
+    alt_step2_3_4: "Hoya Configuration Step 2-3-4",
+    alt_step2_3_5: "Hoya Configuration Step 2-3-5",
+    alt_step2_3_6: "Hoya Configuration Step 2-3-6",
+    alt_step2_3_7: "Hoya Configuration Step 2-3-7",
+    alt_step2_3_8: "Hoya Configuration Step 2-3-8",
+    alt_step2_3_9: "Hoya Configuration Step 2-3-9",
+    alt_step3_3_3: "Moxa Settings Step 3-3-3",
+    alt_step3_3_5: "Moxa Settings Step 3-3-5",
+    alt_step4_3_6: "Tracer Usage Step 4-3-6",
+    alt_step5_7: "Show Token Step 5-7"
+  }
+};
+
+let language = "it";
+let currentStepId = "langSelect";
+const historyStack = [];
+const visited = new Set();
+const clickTrail = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+  showStep(currentStepId);
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('button');
+    if (!target) return;
+    const nextId = target.getAttribute('data-next');
+    if (nextId) {
+      const itLabel = getTextFromI18n(target, 'it');
+      const enLabel = getTextFromI18n(target, 'en');
+      clickTrail.push({ stepId: currentStepId, it: itLabel, en: enLabel });
+      goTo(nextId); 
+      return;
+    }
+    if (target.hasAttribute('data-back')) { goBack(); return; }
+    if (target.hasAttribute('data-copy')) { copyHistory(); return; }
+  });
+
+  // Gestione ingrandimento immagini
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('.image-links a');
+    if (link) {
+      e.preventDefault();
+      openModal(link.href);
+    }
+  });
+});
+
+function showStep(stepId){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('is-active'));
+  const stepEl = document.getElementById(stepId);
+  if (stepEl){
+    stepEl.classList.add('is-active');
+    visited.add(stepId);
+  }
+}
+
+function goTo(stepId){
+  historyStack.push(currentStepId);
+  currentStepId = stepId;
+  showStep(stepId);
+}
+
+function goBack(){
+  if (!historyStack.length) return;
+  currentStepId = historyStack.pop();
+  clickTrail.pop();
+  showStep(currentStepId);
+}
+
+function setLanguage(lang) {
+  language = lang;
+  applyTranslations();
+  if (currentStepId === "langSelect") {
+    goTo("step0");
+  }
+}
+
+function applyTranslations() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    el.innerHTML = translations[language][key] || key;
+  });
+}
+
+function stripHTML(html) {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return (tmp.textContent || tmp.innerText || "").trim();
+}
+
+function getTextFromI18n(el, langCode) {
+  const key = el.getAttribute("data-i18n");
+  if (key) {
+    let val = (translations[langCode] && translations[langCode][key]) || (translations.it && translations.it[key]) || "";
+    if (!val) return (el.innerText || "").trim();
+    return stripHTML(val);
+  }
+  return (el.innerText || "").trim();
+}
+
+function copyHistory() {
+  const prefixIt = "Lo store ha segnalato un problema con il tracer. Di seguito il troubleshooting effettuato:";
+  const prefixEn = "The store reported an issue with the tracer. Below are the troubleshooting steps performed:";
+
+  const choiceByStep = {};
+  clickTrail.forEach(c => { if (c.stepId) choiceByStep[c.stepId] = c; });
+  const SKIP_STEPS = new Set(['langSelect', 'step0']);
+
+  const buildSection = (langCode) => {
+    let sec = '';
+    const allSteps = [...historyStack, currentStepId];
+    
+    allSteps.forEach((stepId) => {
+      if (SKIP_STEPS.has(stepId)) return;
+      const step = document.getElementById(stepId);
+      if (!step) return;
+
+      const ch = choiceByStep[stepId];
+      const chosen = ch ? (langCode === 'en' ? ch.en : ch.it) : '';
+
+      let stepContent = '';
+      const lines = step.querySelectorAll('p, li');
+      let firstP = true;
+      
+      lines.forEach(node => {
+        let line = getTextFromI18n(node, langCode);
+        if (!line || line.includes('SÌ / YES') || line.includes('NO')) return;
+        
+        if (firstP && node.tagName.toLowerCase() === 'p' && chosen) {
+          line = `${line} -> ${chosen}`;
+          firstP = false;
+        }
+        stepContent += `• ${line}\n`;
+      });
+
+      if (chosen && !stepContent.includes(chosen)) {
+        stepContent += `-> ${chosen}\n`;
+      }
+
+      if (stepContent) {
+        sec += stepContent + '\n';
+      }
+    });
+    return sec.trim();
+  };
+
+  const itSection = buildSection('it');
+  const enSection = buildSection('en');
+  
+  const output = `${prefixIt}\n\n${itSection}\n\n--------------------------------------\n\n${prefixEn}\n\n${enSection}`;
+
+  navigator.clipboard.writeText(output).then(() => {
+    alert(translations[language].copy_success);
+  });
+}
+
+function openModal(src) {
+  const modal = document.getElementById('imageModal');
+  const img = document.getElementById('imgFull');
+  img.src = src;
+  modal.classList.add('is-visible');
+}
+function closeModal() {
+  document.getElementById('imageModal').classList.remove('is-visible');
+}
+</script>
+</body>
+</html>
