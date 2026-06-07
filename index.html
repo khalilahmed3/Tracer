@@ -226,6 +226,42 @@
     flex-wrap: wrap;
   }
 
+  .category-group {
+    margin-top: 22px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .category-group .category-label {
+    margin: 0 0 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .category-group .category-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .category-group .category-list p,
+  .category-group .category-list li {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(0,255,255,0.08);
+    color: #e8f9ff;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+
   /* ── Images ── */
   .image-links {
     display: flex;
@@ -385,8 +421,8 @@
       <section id="step1_2" class="step">
         <h2 class="step-title" data-i18n="title_step1_2">Escalation Local IT</h2>
         <p data-i18n="step1_2_p1">Assegnare il ticket a <strong>'ITALY - LOCAL IT TEAM'</strong></p>
-        <p data-i18n="step1_2_p2"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Essilor > Other</p>
-        <p data-i18n="step1_2_p3"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Hoya > Other</p>
+        <p data-i18n="step1_2_p2"><strong>Categoria:</strong> RETAIL > B&F - IN STORE TECH > CIAO HW > HW > TRACER</p>
+        <p data-i18n="step1_2_p3"><strong>Categoria:</strong> RETAIL > B&F - IN STORE TECH > CIAO HW > HW > TRACER - HOYA GT3000</p>
 
         <div class="bottom-actions">
           <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
@@ -594,10 +630,32 @@
 
       <!-- STEP 2-0 (Risoluzione) -->
       <section id="step2_0" class="step">
-        <h2 class="step-title">Ticket Risolto</h2>
+        <h2 class="step-title" data-i18n="title_step2_0">Ticket Risolto</h2>
         <p data-i18n="step2_0_p1">Risolvere il ticket.</p>
-        <p data-i18n="step1_2_p2"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Essilor > Other</p>
-        <p data-i18n="step1_2_p3"><strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Hoya > Other</p>
+
+        <div class="category-group">
+          <p class="category-label">Problema hardware</p>
+          <div class="category-list">
+            <p>RETAIL &gt; B&amp;F - IN STORE TECH &gt; CIAO HW &gt; HW &gt; TRACER</p>
+            <p>B&amp;F - IN STORE TECH &gt; CIAO HW &gt; HW &gt; TRACER - HOYA GT3000</p>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <p class="category-label">Problema Software</p>
+          <div class="category-list">
+            <p>RETAIL &gt; APPLICATION &gt; CIAO OPTICAL &gt; SW &gt; LPA ISSUE</p>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <p class="category-label">Problema SHAMIR / OPSYSWEB</p>
+          <div class="category-list">
+            <p>RETAIL &gt; IN STORE TECH &gt; TRACER &gt; SW &gt; TRACER - SHAMIR</p>
+            <p>RETAIL &gt; IN STORE TECH &gt; TRACER &gt; SW &gt; TRACER - OPSYSWEB</p>
+          </div>
+        </div>
+
         <div class="bottom-actions">
           <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
           <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
@@ -924,10 +982,30 @@
       </section>
 
       <section id="step3_2_5" class="step">
-        <h2 class="step-title">Ticket Risolto</h2>
-        <p data-i18n="step3_2_5_p1">Chiusura ticket (CIAO Optical > Toolkit - LPA).</p>
+        <h2 class="step-title" data-i18n="title_step2_0">Ticket Risolto</h2>
         <p data-i18n="step2_0_p1">Risolvere il ticket.</p>
-        <p data-i18n="step3_2_6_cat"><strong>Categoria:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA</p>
+        <div class="category-group">
+          <p class="category-label">Problema hardware</p>
+          <div class="category-list">
+            <p>RETAIL &gt; B&amp;F - IN STORE TECH &gt; CIAO HW &gt; HW &gt; TRACER</p>
+            <p>B&amp;F - IN STORE TECH &gt; CIAO HW &gt; HW &gt; TRACER - HOYA GT3000</p>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <p class="category-label">Problema Software</p>
+          <div class="category-list">
+            <p>RETAIL &gt; APPLICATION &gt; CIAO OPTICAL &gt; SW &gt; LPA ISSUE</p>
+          </div>
+        </div>
+
+        <div class="category-group">
+          <p class="category-label">Problema SHAMIR / OPSYSWEB</p>
+          <div class="category-list">
+            <p>RETAIL &gt; IN STORE TECH &gt; TRACER &gt; SW &gt; TRACER - SHAMIR</p>
+            <p>RETAIL &gt; IN STORE TECH &gt; TRACER &gt; SW &gt; TRACER - OPSYSWEB</p>
+          </div>
+        </div>
         
         <div class="bottom-actions">
           <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
@@ -1271,13 +1349,12 @@
       <section id="step3_2_6" class="step">
         <h2 class="step-title" data-i18n="title_step3_2_6">Escalation 3rd Level Support</h2>
         <p data-i18n="step3_2_6_p1">Assegnare il ticket a <strong>"SSS North America - POS Triage - 3rd Level Support"</strong></p>
-        <p data-i18n="step3_2_6_cat"><strong>Categoria:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA</p>
+        <p data-i18n="step3_2_6_cat"><strong>Categoria:</strong> RETAIL > APPLICATION > CIAO OPTICAL > SW > LPA ISSUE</p>
         <div class="bottom-actions">
           <button type="button" class="btn-secondary" data-back data-i18n="btn_back">Indietro</button>
           <button type="button" class="btn" data-copy data-i18n="btn_copy">Copia cronologia</button>
         </div>
       </section>
-
     </main>
 
     <div id="imageModal" class="modal" onclick="closeModal()">
@@ -1342,8 +1419,8 @@ const translations = {
     title_step3_1_13: "Essilor: Configurazione Baud Rate",
     title_step3_3_1: "Impostazioni Moxa Avanzate",
     title_step3_3_3: "Moxa: Basic & Network Settings",
-    step1_2_p2: "<strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Essilor > Other",
-    step1_2_p3: "<strong>Categoria:</strong> IN STORE TECH > HW > Tracer - Hoya > Other",
+    step1_2_p2: "<strong>Categoria:</strong> RETAIL > B&F - IN STORE TECH > CIAO HW > HW > TRACER",
+    step1_2_p3: "<strong>Categoria:</strong> RETAIL > B&F - IN STORE TECH > CIAO HW > HW > TRACER - HOYA GT3000",
     step2_q1: "Dove viene visualizzato l’errore?",
     step2_b1: "Errore sul display",
     step2_b2: "LPA Sedico",
@@ -1428,7 +1505,14 @@ const translations = {
     hoya_conf_4: "Cercare <strong>H100 SET PORT</strong> e confermare con START.",
     hoya_conf_5: "Punti da CORREGGERE: POINT: 400, CIRC: ON, HBOX: ON, VBOX: ON. SPEGNETE e RIACCENDETE il Tracciatore per COMPLETARE la procedura.",
     step2_3_9_q1: "Il problema è risolto?",
+    title_step2_0: "Ticket Risolto",
     step2_0_p1: "Risolvere il ticket.",
+    step2_0_hw_label: "Problema hardware:",
+    step2_0_sw_label: "Problema Software:",
+    step2_0_sw_cat: "RETAIL > APPLICATION > CIAO OPTICAL > SW > LPA ISSUE",
+    step2_0_web_label: "Problema SHAMIR / OPSYSWEB:",
+    step2_0_web_cat1: "RETAIL > IN STORE TECH > TRACER > SW > TRACER - SHAMIR",
+    step2_0_web_cat2: "RETAIL > IN STORE TECH > TRACER > SW > TRACER - OPSYSWEB",
     step2_4_q1: "Qual è l'errore che esce sul display?",
     step2_4_1_p1: "Indicare allo store di premere il tasto Verde spuntato sulla tastiera del tracciatore.",
     step2_4_1_q1: "Il problema è risolto?",
@@ -1452,9 +1536,8 @@ const translations = {
     step3_3_7_q1: "Il problema è risolto?",
     step3_2_1_p1: "Problema legato all'utente. Accedere a LPA con credenziali Store Manager.",
     step3_2_2_p1: "Entrare in Associate Setup e modificare le abilitazioni degli utenti.",
-    step3_2_5_p1: "Risolvere il ticket (CIAO Optical > Toolkit - LPA).",
     step3_2_6_p1: "Assegnare il ticket a SSS North America - POS Triage.",
-    step3_2_6_cat: "<strong>Categoria:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA",
+    step3_2_6_cat: "<strong>Categoria:</strong> RETAIL > APPLICATION > CIAO OPTICAL > SW > LPA ISSUE",
     alt_step2_3_3: "Configurazione Hoya Step 2-3-3",
     alt_step2_3_4: "Configurazione Hoya Step 2-3-4",
     alt_step2_3_5: "Configurazione Hoya Step 2-3-5",
@@ -1522,8 +1605,8 @@ const translations = {
     title_step3_1_13: "Essilor: Baud Rate Config",
     title_step3_3_1: "Advanced Moxa Settings",
     title_step3_3_3: "Moxa: Basic & Network Settings",
-    step1_2_p2: "<strong>Category:</strong> IN STORE TECH > HW > Tracer - Essilor > Other",
-    step1_2_p3: "<strong>Category:</strong> IN STORE TECH > HW > Tracer - Hoya > Other",
+    step1_2_p2: "<strong>Category:</strong> RETAIL > B&F - IN STORE TECH > CIAO HW > HW > TRACER",
+    step1_2_p3: "<strong>Category:</strong> RETAIL > B&F - IN STORE TECH > CIAO HW > HW > TRACER - HOYA GT3000",
     step2_q1: "Where is the error displayed?",
     step2_b1: "Display error message",
     step2_b2: "LPA Sedico",
@@ -1597,7 +1680,14 @@ const translations = {
     step2_3_p1: "Go to Tools in GLOBAL-CUSORDER server.",
     step2_3_1_p1: "Search for the SYSTECH STARTUP FILE CONFIGURATION command and start it with Run This Command. <br>Wait for the process to finish.",
     step2_3_2_p1: "Search for the SYSTECH SERVICE RESTART command and start it with Run This Command. <br>Wait for the process to finish.",
+    title_step2_0: "Ticket Resolved",
     step2_0_p1: "Resolve the ticket.",
+    step2_0_hw_label: "Hardware issue:",
+    step2_0_sw_label: "Software issue:",
+    step2_0_sw_cat: "RETAIL > APPLICATION > CIAO OPTICAL > SW > LPA ISSUE",
+    step2_0_web_label: "SHAMIR / OPSYSWEB issue:",
+    step2_0_web_cat1: "RETAIL > IN STORE TECH > TRACER > SW > TRACER - SHAMIR",
+    step2_0_web_cat2: "RETAIL > IN STORE TECH > TRACER > SW > TRACER - OPSYSWEB",
     step2_3_2_q1: "Is the problem solved?",
     step2_3_5_p1: "Use SELECT to set the BARCODE option. To enable BARCODE>BARCODE press UP & DOWN, then CONFIRM with START.",
     step2_3_6_p1: "Press RESET to EXIT. Search for H101 SET COMM and confirm with START. Settings should be 9600 N 1.",
@@ -1632,9 +1722,8 @@ const translations = {
     step3_3_7_q1: "Is the problem solved?",
     step3_2_1_p1: "User-related issue. Access LPA with Store Manager credentials.",
     step3_2_2_p1: "Enter Associate Setup and modify user permissions.",
-    step3_2_5_p1: "Resolve the ticket (CIAO Optical > Toolkit - LPA).",
     step3_2_6_p1: "Assign ticket to SSS North America - POS Triage.",
-    step3_2_6_cat: "<strong>Category:</strong> IN STORE TECH > SW > CIAO Optical > Toolkit - LPA",
+    step3_2_6_cat: "<strong>Category:</strong> RETAIL > APPLICATION > CIAO OPTICAL > SW > LPA ISSUE",
     alt_step2_3_3: "Hoya Configuration Step 2-3-3",
     alt_step2_3_4: "Hoya Configuration Step 2-3-4",
     alt_step2_3_5: "Hoya Configuration Step 2-3-5",
@@ -1775,22 +1864,16 @@ function copyHistory() {
       const ch = choiceByStep[stepId];
       const chosen = ch ? (langCode === 'en' ? ch.en : ch.it) : '';
 
-      let appendedChoice = false;
       const lines = step.querySelectorAll('p, li');
       
       lines.forEach(node => {
         let line = getTextFromI18n(node, langCode);
         if (!line) return;
         if (line.includes('SÌ / YES') || line.includes('NO')) return;
-        
-        if (!appendedChoice && chosen && node.tagName.toLowerCase() === 'p') {
-          line = `${line} ${ansLabel}${chosen}`;
-          appendedChoice = true;
-        }
         sec += `  • ${line}\n`;
       });
 
-      if (chosen && !appendedChoice) {
+      if (chosen) {
         sec += `  ${ansLabel}${chosen}\n`;
       }
 
